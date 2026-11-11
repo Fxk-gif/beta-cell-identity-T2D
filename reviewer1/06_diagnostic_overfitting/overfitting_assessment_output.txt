@@ -1,0 +1,41 @@
+Samples: train(GSE76895)=68, validation(GSE76894)=103
+Train classes: T2D=36, ND=32
+Validation classes: T2D=19, ND=84
+
+Common genes: 15 (PDX1 has no probe in the validation cohort, excluded)
+======================================================================
+1) 5-fold cross-validation on the training set (generalization performance)
+======================================================================
+Logistic regression: CV_AUC=0.952±0.052, balanced_acc=0.827, MCC=0.668
+SVM (RBF): CV_AUC=0.928±0.049, balanced_acc=0.780, MCC=0.562
+Random forest: CV_AUC=0.936±0.045, balanced_acc=0.839, MCC=0.683
+
+======================================================================
+2) Validation set: SLC2A2 single-gene vs multivariable logistic AUC
+======================================================================
+SLC2A2 single-gene validation AUC = 0.869
+Multivariable logistic validation AUC = 0.759
+
+SLC2A2 train in-sample AUC = 0.888 (train-validation gap +0.019)
+Multivariable train in-sample AUC = 0.981 (train-validation gap +0.222)
+
+======================================================================
+3) DeLong test: multivariable vs SLC2A2 single gene
+======================================================================
+Multivariable AUC (DeLong) = 0.759, SLC2A2 AUC (DeLong) = 0.869
+DeLong Z = -1.866, p = 0.0620
+Conclusion: Multivariable not significantly different from SLC2A2 single gene
+
+======================================================================
+4) bootstrap 95% CI
+======================================================================
+SLC2A2 AUC 95% CI = [0.750, 0.951]
+Multivariable AUC 95% CI = [0.614, 0.889]
+
+======================================================================
+5) Class-imbalance-robust metrics (validation set)
+======================================================================
+Logistic regression: balanced_acc=0.688, MCC=0.328
+SVM (RBF): balanced_acc=0.635, MCC=0.216
+Random forest: balanced_acc=0.393, MCC=-0.219
+

@@ -1,0 +1,7 @@
+Baron et al. (2016, Cell Systems; GSE84133) donor structure:
+  human1 (ND): 872 beta-cells
+  human2 (ND): 371 beta-cells
+  human3 (ND): 787 beta-cells
+  human4 (T2D): 495 beta-cells
+
+The T2D group contains a single donor (human4, 495 beta-cells). Because n = 1 for the T2D group, no inferential test is valid; only a directional log2 fold change is reported, and the cell-level P value from the original submission is withdrawn.

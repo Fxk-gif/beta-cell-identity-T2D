@@ -1,0 +1,5 @@
+donor,disease,total_cells,acinar_n,acinar_pct,activated_stellate_n,activated_stellate_pct,alpha_n,alpha_pct,beta_n,beta_pct,delta_n,delta_pct,ductal_n,ductal_pct,endothelial_n,endothelial_pct,epsilon_n,epsilon_pct,gamma_n,gamma_pct,macrophage_n,macrophage_pct,mast_n,mast_pct,quiescent_stellate_n,quiescent_stellate_pct,schwann_n,schwann_pct,t_cell_n,t_cell_pct
+human1,ND,1937,110,5.6789,51,2.6329,236,12.1838,872,45.0181,214,11.048,120,6.1951,130,6.7114,13,0.6711,70,3.6138,14,0.7228,8,0.413,92,4.7496,5,0.2581,2,0.1033
+human2,ND,1724,3,0.174,81,4.6984,676,39.2111,371,21.5197,125,7.2506,301,17.4594,23,1.3341,2,0.116,86,4.9884,17,0.9861,9,0.522,22,1.2761,6,0.348,2,0.116
+human3,ND,3605,843,23.3842,100,2.7739,1130,31.3454,787,21.8308,161,4.466,376,10.43,92,2.552,2,0.0555,36,0.9986,14,0.3883,7,0.1942,54,1.4979,1,0.0277,2,0.0555
+human4,T2D,1303,2,0.1535,52,3.9908,284,21.7959,495,37.9893,101,7.7513,280,21.4889,7,0.5372,1,0.0767,63,4.835,10,0.7675,1,0.0767,5,0.3837,1,0.0767,1,0.0767

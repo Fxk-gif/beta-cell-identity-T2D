@@ -1,0 +1,97 @@
+==============================================================================
+Cell-type fractions — Baron et al. (GSE84133)
+==============================================================================
+
+human1 (ND): total cells = 1937
+    acinar                 110  (  5.68%)
+    activated_stellate      51  (  2.63%)
+    alpha                  236  ( 12.18%)
+    beta                   872  ( 45.02%)
+    delta                  214  ( 11.05%)
+    ductal                 120  (  6.20%)
+    endothelial            130  (  6.71%)
+    epsilon                 13  (  0.67%)
+    gamma                   70  (  3.61%)
+    macrophage              14  (  0.72%)
+    mast                     8  (  0.41%)
+    quiescent_stellate      92  (  4.75%)
+    schwann                  5  (  0.26%)
+    t_cell                   2  (  0.10%)
+
+human2 (ND): total cells = 1724
+    acinar                   3  (  0.17%)
+    activated_stellate      81  (  4.70%)
+    alpha                  676  ( 39.21%)
+    beta                   371  ( 21.52%)
+    delta                  125  (  7.25%)
+    ductal                 301  ( 17.46%)
+    endothelial             23  (  1.33%)
+    epsilon                  2  (  0.12%)
+    gamma                   86  (  4.99%)
+    macrophage              17  (  0.99%)
+    mast                     9  (  0.52%)
+    quiescent_stellate      22  (  1.28%)
+    schwann                  6  (  0.35%)
+    t_cell                   2  (  0.12%)
+
+human3 (ND): total cells = 3605
+    acinar                 843  ( 23.38%)
+    activated_stellate     100  (  2.77%)
+    alpha                 1130  ( 31.35%)
+    beta                   787  ( 21.83%)
+    delta                  161  (  4.47%)
+    ductal                 376  ( 10.43%)
+    endothelial             92  (  2.55%)
+    epsilon                  2  (  0.06%)
+    gamma                   36  (  1.00%)
+    macrophage              14  (  0.39%)
+    mast                     7  (  0.19%)
+    quiescent_stellate      54  (  1.50%)
+    schwann                  1  (  0.03%)
+    t_cell                   2  (  0.06%)
+
+human4 (T2D): total cells = 1303
+    acinar                   2  (  0.15%)
+    activated_stellate      52  (  3.99%)
+    alpha                  284  ( 21.80%)
+    beta                   495  ( 37.99%)
+    delta                  101  (  7.75%)
+    ductal                 280  ( 21.49%)
+    endothelial              7  (  0.54%)
+    epsilon                  1  (  0.08%)
+    gamma                   63  (  4.83%)
+    macrophage              10  (  0.77%)
+    mast                     1  (  0.08%)
+    quiescent_stellate       5  (  0.38%)
+    schwann                  1  (  0.08%)
+    t_cell                   1  (  0.08%)
+
+==============================================================================
+Beta-cell fraction — key comparison
+==============================================================================
+
+  human1 (ND): beta of total cells 45.02% ; beta of endocrine cells 62.06%
+  human2 (ND): beta of total cells 21.52% ; beta of endocrine cells 29.44%
+  human3 (ND): beta of total cells 21.83% ; beta of endocrine cells 37.19%
+  human4 (T2D): beta of total cells 37.99% ; beta of endocrine cells 52.44%
+
+  ND donors beta fraction (of total cells): ['45.02%', '21.52%', '21.83%']
+      mean = 29.46% , std = 11.00 percentage points
+  T2D donors beta fraction (of total cells): ['37.99%']
+
+==============================================================================
+Conclusion
+==============================================================================
+
+  1. The beta-cell fraction of the T2D donor (human4) (37.99% of total cells) is not lower than the ND mean (29.46%),
+     but higher; and the beta fraction differs greatly among the three ND donors (21.52% ~ 45.02%).
+  2. Therefore, the cell-type annotations of the single-cell datasets do NOT support a decrease in beta-cell (compositional) fraction.
+  3. The Baron T2D group has only 1 donor, so no statistical test is possible; the variation among the 3 ND donors
+     far exceeds the ND-T2D difference, indicating that this variation is driven mainly by inter-donor/technical batch effects (islet isolation, cell sorting),
+     rather than disease state.
+  4. The core judgment in Reviewer 1 Comment #4 is correct: the absence of a single-cell PDX1/NKX6-1 signal cannot be
+     interpreted as compositional depletion of mature beta-cells; dropout and low abundance are competing explanations,
+     and the computed cell fractions provide no evidence of a decreased beta fraction.
+  5. The appropriate action is therefore to withdraw/qualify the compositional causal claim of 'compositional depletion',
+     and to re-attribute the bulk decrease in PDX1/NKX6-1 to technical/confounding factors that cannot be excluded, rather than reduced mature beta-cells.
+

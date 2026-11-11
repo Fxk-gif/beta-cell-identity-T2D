@@ -1,0 +1,47 @@
+Bulk progenitor/disallowed score (8-gene panel)
+Panel: FOXE1, MYCN, CHL1, OPRD1, GRIN2D, ALDH1A3, HES1, SOX9
+Test: Wilcoxon rank-sum (exact), T2D vs ND
+
+============================================================
+Cohort: GSE76895  (T2D n=36, ND n=32)
+Genes used (8): FOXE1, MYCN, CHL1, OPRD1, GRIN2D, ALDH1A3, HES1, SOX9
+Score mean  ND = +0.3213, T2D = -0.2856
+Wilcoxon exact p = 1.369363e-11
+Wilcoxon asymptotic p = 1.437140e-09 (reference)
+
+Single-gene contribution (group-mean expression, exact p):
+gene          ND mean   T2D mean      exact p
+FOXE1           6.604      5.314    6.438e-05
+MYCN            7.013      5.933    8.323e-06
+CHL1           10.130      8.993    8.455e-08
+OPRD1           8.565      7.388    2.249e-08
+GRIN2D          6.587      5.325    4.608e-08
+ALDH1A3         7.671      8.449    2.854e-02
+HES1            8.603      8.854    2.628e-01
+SOX9            9.042      9.062    9.368e-01
+
+============================================================
+Cohort: GSE76894  (T2D n=19, ND n=84)
+Genes used (7): MYCN, CHL1, OPRD1, GRIN2D, ALDH1A3, HES1, SOX9
+Genes absent from platform: FOXE1
+Score mean  ND = +0.0518, T2D = -0.2289
+Wilcoxon exact p = 2.445899e-04
+Wilcoxon asymptotic p = 3.731417e-04 (reference)
+
+Single-gene contribution (group-mean expression, exact p):
+gene          ND mean   T2D mean      exact p
+MYCN            6.107      6.105    9.966e-01
+CHL1            8.039      6.750    4.895e-06
+OPRD1           8.299      7.284    6.651e-07
+GRIN2D          5.987      5.171    2.076e-03
+ALDH1A3        11.945     12.148    1.213e-01
+HES1           10.364     10.298    3.636e-01
+SOX9           11.118     11.786    6.252e-06
+
+============================================================
+Summary (full-precision p-values, exact method):
+  GSE76895: p = 1.369e-11
+  GSE76894: p = 2.446e-04
+
+Note: FOXE1 is absent from the GPL570 probes of GSE76894, so
+the validation score is computed from the remaining 7 genes.

@@ -1,0 +1,5 @@
+model,Youden_threshold,balanced_accuracy,bAcc_CI_lower,bAcc_CI_upper,sensitivity,specificity,F1,MCC,MCC_CI_lower,MCC_CI_upper
+SLC2A2_single_gene,-6.5563,0.8606,0.7926,0.9286,0.9474,0.7738,0.6429,0.5830,0.4664,0.7419
+Logistic regression,0.3272,0.7315,0.6576,0.8487,0.7368,0.7262,0.5000,0.3743,0.2616,0.7237
+SVM (RBF),0.0104,0.7697,0.6669,0.8750,0.7895,0.7500,0.5455,0.4388,0.2675,0.6243
+Random forest,0.1890,0.5476,0.5179,0.5833,1.0000,0.0952,0.3333,0.1380,0.0770,0.1886

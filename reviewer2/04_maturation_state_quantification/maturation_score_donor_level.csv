@@ -1,0 +1,19 @@
+donor,condition,n_cells,mean_maturation_score
+Non T2D 1,non-diabetic,13,-0.259046
+Non T2D 10,non-diabetic,26,0.100247
+Non T2D 11,non-diabetic,12,0.164254
+Non T2D 12,non-diabetic,50,-0.009549
+Non T2D 2,non-diabetic,13,-0.380705
+Non T2D 3,non-diabetic,10,0.123550
+Non T2D 4,non-diabetic,11,0.075733
+Non T2D 5,non-diabetic,24,-0.005364
+Non T2D 6,non-diabetic,7,-0.291237
+Non T2D 7,non-diabetic,17,-0.476163
+Non T2D 8,non-diabetic,17,-0.057103
+Non T2D 9,non-diabetic,7,-0.228580
+T2D 1,T2D,12,0.067320
+T2D 2,T2D,18,-0.138627
+T2D 3,T2D,29,0.128608
+T2D 4,T2D,144,0.088081
+T2D 5,T2D,12,-0.162556
+T2D 6,T2D,81,0.027235

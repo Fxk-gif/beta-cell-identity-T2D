@@ -1,0 +1,19 @@
+donor,condition,mature_beta_pct
+Non T2D 1,non-diabetic,30.7692
+Non T2D 10,non-diabetic,61.5385
+Non T2D 11,non-diabetic,83.3333
+Non T2D 12,non-diabetic,54.0000
+Non T2D 2,non-diabetic,0.0000
+Non T2D 3,non-diabetic,70.0000
+Non T2D 4,non-diabetic,72.7273
+Non T2D 5,non-diabetic,45.8333
+Non T2D 6,non-diabetic,42.8571
+Non T2D 7,non-diabetic,35.2941
+Non T2D 8,non-diabetic,52.9412
+Non T2D 9,non-diabetic,28.5714
+T2D 1,T2D,58.3333
+T2D 2,T2D,55.5556
+T2D 3,T2D,62.0690
+T2D 4,T2D,69.4444
+T2D 5,T2D,50.0000
+T2D 6,T2D,59.2593

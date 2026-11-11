@@ -1,0 +1,37 @@
+==============================================================================
+Donor-overlap check: GSE76895 (PPP) vs GSE76894 (OD)
+==============================================================================
+
+GSE76895 : 103 samples
+GSE76894 : 103 samples
+
+[Layer 1] Donor identifier cross-match
+  GSE76895 unique donor codes : 103  (prefix DP = pancreatectomy)
+  GSE76894 unique donor codes : 82  (prefix PO = organ donor)
+  Example GSE76895 donor codes: ['DP002', 'DP003', 'DP005', 'DP007', 'DP008', 'DP010']
+  Example GSE76894 donor codes: ['PO755', 'PO761', 'PO764', 'PO765', 'PO767', 'PO770']
+  Donor-code intersection      : NONE
+  Overlapping donor codes      : 0
+
+[Layer 2] Numeric donor-code cross-match (strip DP/PO prefix)
+  GSE76895 numeric range       : 2 - 197
+  GSE76894 numeric range       : 755 - 946
+  Numeric-code intersection    : NONE
+  Overlapping numeric codes    : 0
+
+[Layer 3] Demographic cross-match (age + sex + BMI exact triple)
+  GSE76895 samples with complete (age,sex,BMI): 103
+  GSE76894 samples with complete (age,sex,BMI): 102
+  Exact (age,sex,BMI) triples shared         : 0
+    (none)
+
+==============================================================================
+CONCLUSION
+==============================================================================
+No donor overlap detected between GSE76895 (PPP) and GSE76894 (OD).
+The two cohorts carry disjoint donor identifiers (DP### vs PO###),
+disjoint numeric donor codes, and no exact (age, sex, BMI) triple
+matches, consistent with two non-overlapping donor groups drawn from
+distinct sample-collection protocols (partial pancreatectomy vs.
+organ donation).
+==============================================================================

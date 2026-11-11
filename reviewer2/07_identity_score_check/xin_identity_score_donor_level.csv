@@ -1,0 +1,19 @@
+donor,condition,n_cells,mean_identity_score
+Non T2D 1,non-diabetic,13,-0.121500
+Non T2D 10,non-diabetic,26,-0.106794
+Non T2D 11,non-diabetic,12,-0.011627
+Non T2D 12,non-diabetic,50,0.030354
+Non T2D 2,non-diabetic,13,-0.206897
+Non T2D 3,non-diabetic,10,0.197689
+Non T2D 4,non-diabetic,11,-0.059883
+Non T2D 5,non-diabetic,24,-0.009548
+Non T2D 6,non-diabetic,7,0.137084
+Non T2D 7,non-diabetic,17,0.272477
+Non T2D 8,non-diabetic,17,0.016789
+Non T2D 9,non-diabetic,7,-0.052215
+T2D 1,T2D,12,0.226378
+T2D 2,T2D,18,-0.099679
+T2D 3,T2D,29,-0.030803
+T2D 4,T2D,144,0.015290
+T2D 5,T2D,12,-0.120571
+T2D 6,T2D,81,-0.021197

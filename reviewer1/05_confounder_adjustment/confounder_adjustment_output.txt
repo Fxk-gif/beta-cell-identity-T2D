@@ -1,0 +1,45 @@
+##############################################################################
+# R1-5 confounder adjustment: identity score ~ group + age + gender + bmi + batch
+##############################################################################
+
+==============================================================================
+GSE76895   (donor source: pancreatectomy (partial pancreatectomy patients))
+==============================================================================
+  samples: 68 (T2D=36, ND=32)
+  missing covariate values imputed: 0
+  mean age: 63.1 (T2D 65.8 vs ND 60.0)
+  mean BMI: 25.4 (T2D 25.8 vs ND 24.9)
+  gender (male proportion): 0.57
+  [identity score] unadjusted Mann-Whitney p = 2.2067e-03
+  [identity score] adjusted OLS: group beta=-0.1910, SE=0.1770, t=-1.079, p=2.8524e-01 (df=56)
+  --- key genes, before vs after adjustment ---
+  gene            unadj p        adj p     adj beta
+  INS          9.2707e-01   8.4015e-01      -0.0048
+  SLC2A2       2.7108e-09   6.0138e-09      -1.5572
+  GCK          5.7842e-01   3.6473e-01      +0.1372
+  PDX1         1.1860e-07   1.7963e-05      -0.6256
+  NKX6-1       5.4854e-04   7.7201e-03      -0.4305
+  MAFB         2.4736e-01   5.2134e-01      -0.0656
+  IAPP         4.4041e-02   4.7526e-01      -0.0557
+  SLC30A8      8.4995e-01   9.7520e-01      -0.0033
+
+==============================================================================
+GSE76894   (donor source: organ donor)
+==============================================================================
+  samples: 103 (T2D=19, ND=84)
+  missing covariate values imputed: 1
+  mean age: 62.3 (T2D 72.2 vs ND 60.0)
+  mean BMI: 25.9 (T2D 26.5 vs ND 25.8)
+  gender (male proportion): 0.50
+  [identity score] unadjusted Mann-Whitney p = 3.6300e-06
+  [identity score] adjusted OLS: group beta=-0.5232, SE=0.1871, t=-2.796, p=6.2950e-03 (df=92)
+  --- key genes, before vs after adjustment ---
+  gene            unadj p        adj p     adj beta
+  INS          6.4314e-04   5.1810e-01      -0.0325
+  SLC2A2       5.6576e-08   1.0762e-05      -1.7401
+  GCK          1.3798e-03   3.3485e-02      -0.4341
+  NKX6-1       9.9662e-04   7.5607e-03      -0.3135
+  MAFB         5.8096e-02   2.6416e-01      -0.1455
+  IAPP         2.3556e-07   1.7034e-03      -0.5106
+  SLC30A8      7.9718e-03   1.9582e-01      -0.1974
+

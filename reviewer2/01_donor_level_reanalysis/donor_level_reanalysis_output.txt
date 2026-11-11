@@ -1,0 +1,72 @@
+######################################################################
+Donor-level single-cell reanalysis (Reviewer 2, Comment 1)
+######################################################################
+
+Baron et al. (2016, Cell Systems; GSE84133) donor structure:
+  human1 (ND): 872 beta-cells
+  human2 (ND): 371 beta-cells
+  human3 (ND): 787 beta-cells
+  human4 (T2D): 495 beta-cells
+
+The T2D group contains a single donor (human4, 495 beta-cells). Because n = 1 for the T2D group, no inferential test is valid; only a directional log2 fold change is reported, and the cell-level P value from the original submission is withdrawn.
+
+=== Baron donor-level log2FC (T2D n=1, directional only) ===
+PDX1            743.3      822.0   +0.145
+NKX6-1         1030.0      644.0   -0.677
+HNF1A            24.3        9.0   -1.386
+HNF4A            23.3       12.0   -0.931
+MAFB           1764.0      908.0   -0.958
+NEUROD1        1387.7     1845.0   +0.411
+PAX6           2016.0     1979.0   -0.027
+SLC2A2           32.7        6.0   -2.351
+GCK             133.0      204.0   +0.615
+ABCC8          2792.7     2906.0   +0.057
+IAPP         134853.0    50749.0   -1.410
+GLP1R            69.7       45.0   -0.625
+SLC30A8        2286.3     4935.0   +1.110
+PCSK1          2988.0     4408.0   +0.561
+PCSK2          1162.0     1797.0   +0.629
+INS          730437.0   384175.0   -0.927
+
+=== Xin et al. (2016, Cell Metabolism; GSE81608) ===
+ND donors (12): ['Non T2D 1', 'Non T2D 10', 'Non T2D 11', 'Non T2D 12', 'Non T2D 2', 'Non T2D 3', 'Non T2D 4', 'Non T2D 5', 'Non T2D 6', 'Non T2D 7', 'Non T2D 8', 'Non T2D 9']
+T2D donors (6): ['T2D 1', 'T2D 2', 'T2D 3', 'T2D 4', 'T2D 5', 'T2D 6']
+Total donors: 18
+
+gene          ND_mean   T2D_mean   log2FC    p_donor
+PDX1           19.176     20.494   +0.095  6.165e-01
+NKX6-1          0.101      0.210   +0.630  4.371e-01
+HNF1A           0.530      0.513   -0.039  9.636e-01
+HNF4A           4.788      2.618   -0.847  2.496e-01
+MAFB           64.908     50.104   -0.373  6.820e-01
+NEUROD1       135.688    160.207   +0.239  2.908e-01
+PAX6           76.741     75.222   -0.029  8.916e-01
+SLC2A2          9.533      1.369   -2.713  1.821e-02
+GCK             3.442      8.830   +1.334  3.232e-03
+ABCC8         133.891    122.127   -0.133  7.503e-01
+IAPP         8147.979   6013.694   -0.438  6.820e-01
+GLP1R           3.639      2.945   -0.296  9.636e-01
+SLC30A8       280.696    349.716   +0.317  2.908e-01
+PCSK1         117.232    148.280   +0.339  5.532e-01
+PCSK2          47.519     74.672   +0.651  3.232e-03
+INS         57462.805  48484.907   -0.245  3.845e-01
+
+=== Xin donor-level Wilcoxon + BH correction ===
+PDX1       log2FC= +0.095 p=6.165e-01 FDR=9.093e-01 
+NKX6-1     log2FC= +0.630 p=4.371e-01 FDR=8.742e-01 
+HNF1A      log2FC= -0.039 p=9.636e-01 FDR=9.636e-01 
+HNF4A      log2FC= -0.847 p=2.496e-01 FDR=7.754e-01 
+MAFB       log2FC= -0.373 p=6.820e-01 FDR=9.093e-01 
+NEUROD1    log2FC= +0.239 p=2.908e-01 FDR=7.754e-01 
+PAX6       log2FC= -0.029 p=8.916e-01 FDR=9.636e-01 
+SLC2A2     log2FC= -2.713 p=1.821e-02 FDR=9.711e-02 
+GCK        log2FC= +1.334 p=3.232e-03 FDR=2.586e-02 *
+ABCC8      log2FC= -0.133 p=7.503e-01 FDR=9.234e-01 
+IAPP       log2FC= -0.438 p=6.820e-01 FDR=9.093e-01 
+GLP1R      log2FC= -0.296 p=9.636e-01 FDR=9.636e-01 
+SLC30A8    log2FC= +0.317 p=2.908e-01 FDR=7.754e-01 
+PCSK1      log2FC= +0.339 p=5.532e-01 FDR=9.093e-01 
+PCSK2      log2FC= +0.651 p=3.232e-03 FDR=2.586e-02 *
+INS        log2FC= -0.245 p=3.845e-01 FDR=8.742e-01 
+
+Unit of analysis = donor (18 donors: 12 ND + 6 T2D), correcting for cell-level pseudoreplication.

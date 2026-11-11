@@ -1,0 +1,4 @@
+model,CV_AUC_mean,CV_AUC_sd,CV_balanced_acc_mean,CV_MCC_mean
+Logistic regression,0.9267,0.0722,0.8529,0.7209
+SVM (RBF),0.9279,0.0467,0.7646,0.5848
+Random forest,0.9501,0.0523,0.8519,0.7198

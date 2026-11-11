@@ -1,0 +1,29 @@
+# Data (download from GEO; not committed)
+data/
+*.csv.gz
+*.txt.gz
+*.RData
+*.Rds
+
+# Outputs
+ml_output/
+figures/*.TIF
+figures/*.tif
+figures/*.pdf
+*.pdf
+*.png
+*.tiff
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS
+.DS_Store
+Thumbs.db

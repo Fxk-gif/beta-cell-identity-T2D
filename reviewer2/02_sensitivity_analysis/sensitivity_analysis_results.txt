@@ -1,0 +1,65 @@
+##############################################################################
+# R2-2 sensitivity analysis: glycemia adjustment + beta-abundance proxy + TF/effector split
+##############################################################################
+
+==============================================================================
+GSE76895  (donor source: pancreatectomy (partial pancreatectomy patients))
+==============================================================================
+  samples: 68 (T2D=36, ND=32)
+  missing covariates: age=0, gender=0, bmi=0, glycemia=10
+  glycemia mean: 6.7 (T2D 7.8 vs ND 5.5)
+  identity-score genes available: 15/15 (TF=6, effector=9)
+  beta-abundance-proxy genes available: 6/6 -> ['CHGA', 'CHGB', 'SCG2', 'SCG3', 'ISL1', 'PCSK1N']
+  [A] identity score base adjustment (age+gender+bmi+batch): p=2.8524e-01, beta=-0.1910 (df=56)
+  [B] identity score + glycemia adjustment: p=3.5473e-01, beta=-0.1935 (df=55)
+  [C] identity score + glycemia + beta-abundance proxy: p=6.9726e-03, beta=-0.3474 (df=54)
+  [D] TF sub-score (+glycemia) : p=2.1233e-01, beta=-0.2295
+  [E] effector sub-score (+glycemia): p=5.0188e-01, beta=-0.1696
+  --- key individual genes (base adjustment vs +glycemia) ---
+    SLC2A2     base p=6.0138e-09 beta=-1.5572  |  +glycemia p=3.6128e-06 beta=-1.3371
+    GCK        base p=3.6473e-01 beta=+0.1372  |  +glycemia p=6.1701e-01 beta=+0.0882
+    PDX1       base p=1.7963e-05 beta=-0.6256  |  +glycemia p=3.7268e-04 beta=-0.5916
+    NKX6-1     base p=7.7201e-03 beta=-0.4305  |  +glycemia p=2.0645e-02 beta=-0.4349
+    INS        base p=8.4015e-01 beta=-0.0048  |  +glycemia p=5.8233e-01 beta=-0.0153
+  [F] beta-abundance proxy T2D vs ND: Mann-Whitney p=1.7262e-01
+
+==============================================================================
+GSE76894  (donor source: organ donor)
+==============================================================================
+  samples: 103 (T2D=19, ND=84)
+  missing covariates: age=0, gender=0, bmi=1, glycemia=5
+  glycemia mean: 8.8 (T2D 11.7 vs ND 8.2)
+  identity-score genes available: 15/15 (TF=6, effector=9)
+  beta-abundance-proxy genes available: 6/6 -> ['CHGA', 'CHGB', 'SCG2', 'SCG3', 'ISL1', 'PCSK1N']
+  [A] identity score base adjustment (age+gender+bmi+batch): p=6.2950e-03, beta=-0.5232 (df=92)
+  [B] identity score + glycemia adjustment: p=3.4600e-02, beta=-0.4444 (df=91)
+  [C] identity score + glycemia + beta-abundance proxy: p=1.0335e-01, beta=-0.1463 (df=90)
+  [D] TF sub-score (+glycemia) : p=1.2504e-01, beta=-0.2851
+  [E] effector sub-score (+glycemia): p=2.1741e-02, beta=-0.5506
+  --- key individual genes (base adjustment vs +glycemia) ---
+    SLC2A2     base p=1.0762e-05 beta=-1.7401  |  +glycemia p=1.7589e-04 beta=-1.6215
+    GCK        base p=3.3485e-02 beta=-0.4341  |  +glycemia p=2.4125e-01 beta=-0.2588
+    NKX6-1     base p=7.5607e-03 beta=-0.3135  |  +glycemia p=1.4970e-02 beta=-0.3165
+    INS        base p=5.1810e-01 beta=-0.0325  |  +glycemia p=4.7058e-01 beta=-0.0404
+  [F] beta-abundance proxy T2D vs ND: Mann-Whitney p=3.6715e-04
+
+==============================================================================
+Summary and conclusions
+==============================================================================
+
+GSE76895: base p=2.852e-01 -> +glycemia p=3.547e-01 -> +proxy p=6.973e-03
+    TF sub-score p=2.123e-01 (beta -0.229), effector sub-score p=5.019e-01 (beta -0.170)
+    beta-abundance proxy T2D vs ND p=1.726e-01
+
+GSE76894: base p=6.295e-03 -> +glycemia p=3.460e-02 -> +proxy p=1.034e-01
+    TF sub-score p=1.250e-01 (beta -0.285), effector sub-score p=2.174e-02 (beta -0.551)
+    beta-abundance proxy T2D vs ND p=3.671e-04
+
+==============================================================================
+Cohort origin and platform
+==============================================================================
+GSE76895 and GSE76894 both originate from the IMIDIA study and were
+profiled on the same Affymetrix GPL570 microarray platform. The two
+cohorts use different donor-id prefixes (DP### vs PO###) with disjoint
+id ranges and zero overlap in the age-sex-BMI triple, i.e. non-overlapping
+donor groups.
