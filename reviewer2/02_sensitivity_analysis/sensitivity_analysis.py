@@ -21,7 +21,10 @@ Based on public GEO data, this script performs the following analyses:
      further adjustment. Glycemia is both an intermediate variable
      determined by T2D status and a proxy for beta-cell load/function,
      so it is treated as a sensitivity analysis rather than a primary
-     effect adjustment.
+     effect adjustment. NOTE: glycemia is an over-adjustment (glycemia
+     largely defines the T2DM group), so the glycemia-adjusted result
+     has been removed from the manuscript; this analysis is retained
+     here only for completeness of the sensitivity assessment.
 
   2. Beta-cell abundance proxy adjustment (cell-composition proxy).
      The GEO metadata contain no islet-purity or beta-cell-proportion
@@ -33,7 +36,11 @@ Based on public GEO data, this script performs the following analyses:
      decline can be explained by this compositional proxy. The proxy is
      itself derived from the same bulk expression data and is therefore
      an approximation rather than a formal deconvolution; it is labelled
-     as a proxy throughout.
+     as a proxy throughout. NOTE: in the revised manuscript this
+     covariate is renamed "islet endocrine-fraction proxy" (Reviewer 1,
+     Round 3), because CHGA/CHGB/SCG2/SCG3/ISL1 and PCSK1N are
+     pan-endocrine rather than β-cell-specific markers; the two names
+     refer to the same covariate.
 
   3. Transcription-factor vs. effector sensitivity (compositional vs.
      autonomous). The 15-gene identity score is split into two
