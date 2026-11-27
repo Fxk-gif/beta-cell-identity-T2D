@@ -1,4 +1,4 @@
-# 方案A验证集交叉验证：GSE76894 独立验证
+# Plan A validation-set cross-validation: GSE76894 independent validation
 source("paths.R")
 library(pROC)
 library(ggplot2)
@@ -15,8 +15,8 @@ expr <- expr[, grp$sample]
 keep <- grp$group %in% c("T2D", "ND")
 expr <- expr[, keep]
 grp  <- grp[keep, ]
-cat("验证集维度:", nrow(expr), "基因 x", ncol(expr), "样本\n")
-cat("分组:", table(grp$group), "\n")
+cat("validation dims:", nrow(expr), "genes x", ncol(expr), "samples\n")
+cat("groups:", table(grp$group), "\n")
 
 beta_identity <- c("PDX1","NKX6-1","HNF1A","HNF4A","MAFB","NEUROD1","PAX6",
                    "SLC2A2","GCK","ABCC8","IAPP","GLP1R","SLC30A8","PCSK1","PCSK2","INS")
@@ -34,15 +34,15 @@ df <- data.frame(group = grp$group, identity_score, neuro_score)
 df$group <- factor(df$group, levels=c("ND","T2D"))
 wi <- wilcox.test(identity_score ~ group, data=df)
 wn <- wilcox.test(neuro_score ~ group, data=df)
-cat("\n=== 验证集身份评分 ===\n")
-cat("β身份评分 p =", wi$p.value, "\n")
-cat("神经内分泌评分 p =", wn$p.value, "\n")
-cat("β身份评分均值 ND vs T2D:", round(mean(df$identity_score[df$group=="ND"]),3),
+cat("\n=== validation identity score ===\n")
+cat("beta identity score p =", wi$p.value, "\n")
+cat("neuroendocrine score p =", wn$p.value, "\n")
+cat("beta identity score mean ND vs T2D:", round(mean(df$identity_score[df$group=="ND"]),3),
     "vs", round(mean(df$identity_score[df$group=="T2D"]),3), "\n")
-cat("神经内分泌评分均值 ND vs T2D:", round(mean(df$neuro_score[df$group=="ND"]),3),
+cat("neuroendocrine score mean ND vs T2D:", round(mean(df$neuro_score[df$group=="ND"]),3),
     "vs", round(mean(df$neuro_score[df$group=="T2D"]),3), "\n")
 
-# 关键基因ROC（验证集）
+# key-gene ROC (validation set)
 roc_genes <- intersect(c("SLC2A2","PDX1","NKX6-1","HNF1A","GLP1R"), rownames(expr))
 neuro_up  <- intersect(c("GAD1","NHLH2","TSHR","CALCA"), rownames(expr))
 outcome <- ifelse(df$group=="T2D", 1, 0)
@@ -53,7 +53,7 @@ for (g in neuro_up)  roc_list[[paste0(g," (up)")]]   <- roc(outcome,  as.numeric
 aucs <- sapply(roc_list, function(x) as.numeric(x$auc))
 auc_df <- data.frame(gene=names(aucs), AUC=round(aucs,3))
 write.csv(auc_df, file.path(outdir, "planA_roc_auc_val.csv"), row.names=FALSE)
-cat("\n=== 验证集身份基因 ROC AUC ===\n")
+cat("\n=== validation identity-gene ROC AUC ===\n")
 print(auc_df[order(-auc_df$AUC),])
 
 pdf(file.path(outdir, "planA_roc_val.pdf"), width=7, height=7)
@@ -63,7 +63,7 @@ for (i in 2:length(roc_list)) plot(roc_list[[i]], col=cols[i], lwd=2, add=TRUE)
 legend("bottomright", legend=sprintf("%s (AUC=%.3f)", names(aucs), aucs), col=cols, lwd=2, cex=0.7, bty="n")
 dev.off()
 
-# 评分箱式图（验证集）
+# score boxplots (validation set)
 df_long <- pivot_longer(df, cols=c(identity_score, neuro_score), names_to="score", values_to="value")
 df_long$score <- factor(df_long$score, levels=c("identity_score","neuro_score"),
                         labels=c("Beta cell identity score","Neuroendocrine score"))
@@ -75,4 +75,4 @@ p <- ggplot(df_long, aes(x=group, y=value, fill=group)) +
   theme_bw(base_size=12) + theme(legend.position="none")
 ggsave(file.path(outdir, "planA_score_box_val.pdf"), p, width=7, height=4)
 
-cat("\n=== 验证集分析完成 ===\n")
+cat("\n=== validation analysis complete ===\n")

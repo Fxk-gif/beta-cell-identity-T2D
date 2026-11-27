@@ -1,6 +1,6 @@
-# 方案A单细胞交叉验证：Xin et al. GSE81608
-# 比较 PDX1/NKX6-1/SLC2A2/GLP1R 等β身份基因在 T2D vs ND β细胞中的表达
-# 输入：sc_data/GSE81608_human_islets_rpkm.txt.gz（列=GSM） + GSE81608_annot.csv
+# Plan A single-cell cross-validation: Xin et al. GSE81608
+# Compare the expression of PDX1/NKX6-1/SLC2A2/GLP1R and other beta-identity genes in T2D vs ND beta-cells
+# Input: sc_data/GSE81608_human_islets_rpkm.txt.gz (cols=GSM) + GSE81608_annot.csv
 source("paths.R")
 library(ggplot2)
 library(pROC)
@@ -8,46 +8,46 @@ library(pROC)
 sc_dir <- sc_dir
 outdir <- fig_dir
 
-# ---- 读注释 ----
+# ---- read annotations ----
 annot <- read.csv(file.path(sc_dir, "GSE81608_annot.csv"), stringsAsFactors = FALSE)
 annot$condition2 <- ifelse(annot$condition == "non-diabetic", "ND", "T2D")
 beta <- annot[annot$subtype == "beta", ]
-cat("beta 细胞数:", nrow(beta), "ND:", sum(beta$condition2=="ND"), "T2D:", sum(beta$condition2=="T2D"), "\n")
+cat("beta cells:", nrow(beta), "ND:", sum(beta$condition2=="ND"), "T2D:", sum(beta$condition2=="T2D"), "\n")
 
-# ---- 读 rpkm 矩阵（gzip） ----
+# ---- read the rpkm matrix (gzip) ----
 mat_file <- file.path(sc_dir, "GSE81608_human_islets_rpkm.txt.gz")
-cat("读取 rpkm 矩阵...\n")
+cat("reading the rpkm matrix...\n")
 mat <- read.delim(gzfile(mat_file), check.names = FALSE, row.names = 1, stringsAsFactors = FALSE)
-cat("矩阵维度:", nrow(mat), "基因 x", ncol(mat), "细胞\n")
+cat("matrix dims:", nrow(mat), "genes x", ncol(mat), "cells\n")
 
-# 列名可能是 GSM 或去掉 GSM 的序号，检查
+# column names may be GSM or the index without GSM; check
 cols <- colnames(mat)
-cat("列名示例:", paste(head(cols), collapse=", "), "\n")
-# 匹配 beta 细胞的列
+cat("column-name examples:", paste(head(cols), collapse=", "), "\n")
+# match the beta-cell columns
 beta_cols <- intersect(beta$GSM, cols)
-cat("匹配到的 beta 列数:", length(beta_cols), "（beta 注释总数", nrow(beta), "）\n")
+cat("matched beta columns:", length(beta_cols), "(beta annotation total", nrow(beta), ")\n")
 if (length(beta_cols) < nrow(beta)) {
-  # 尝试去掉 GSM 前缀匹配
+  # try matching after stripping the GSM prefix
   cols_short <- gsub("^GSM", "", cols)
   beta_short <- gsub("^GSM", "", beta$GSM)
   m <- match(beta_short, cols_short)
-  cat("用去前缀方式匹配，命中:", sum(!is.na(m)), "\n")
+  cat("matched via prefix-stripping:", sum(!is.na(m)), "\n")
   beta_cols <- cols[na.omit(m)]
 }
 
-# ---- 身份基因列表 ----
+# ---- identity-gene list ----
 identity_genes <- c("PDX1","NKX6-1","SLC2A2","GLP1R","HNF1A","HNF4A","MAFA","MAFB",
                     "NEUROD1","PAX6","GCK","ABCC8","KCNJ11","IAPP","SLC30A8","INS")
 neuro_genes <- c("GAD1","GAD2","CALCA","TSHR","NHLH2")
-# 只保留矩阵中有的
+# keep only those present in the matrix
 identity_genes <- intersect(identity_genes, rownames(mat))
 neuro_genes <- intersect(neuro_genes, rownames(mat))
-cat("矩阵中的身份基因:", paste(identity_genes, collapse=", "), "\n")
-cat("矩阵中的神经内分泌基因:", paste(neuro_genes, collapse=", "), "\n")
+cat("identity genes in the matrix:", paste(identity_genes, collapse=", "), "\n")
+cat("neuroendocrine genes in the matrix:", paste(neuro_genes, collapse=", "), "\n")
 
-# ---- 提取 beta 细胞表达 ----
+# ---- extract beta-cell expression ----
 beta_expr <- mat[, beta_cols, drop = FALSE]
-# 对齐分组
+# align the groups
 beta_order <- match(beta_cols, beta$GSM)
 if (any(is.na(beta_order))) {
   beta_order <- match(gsub("^GSM","",beta_cols), gsub("^GSM","",beta$GSM))
@@ -56,19 +56,19 @@ beta_meta <- beta[beta_order, ]
 stopifnot(nrow(beta_meta) == ncol(beta_expr))
 beta_meta$condition2 <- factor(beta_meta$condition2, levels = c("ND","T2D"))
 
-# ---- 身份评分（beta细胞层面） ----
+# ---- identity score (beta-cell level) ----
 zscore <- function(x) (x - mean(x)) / sd(x)
 id_z <- t(apply(beta_expr[identity_genes, , drop=FALSE], 1, zscore))
 identity_score <- colMeans(id_z, na.rm=TRUE)
 beta_meta$identity_score <- identity_score
 
 wi <- wilcox.test(identity_score ~ condition2, data = beta_meta)
-cat("\n=== β细胞身份评分（单细胞） ===\n")
+cat("\n=== beta-cell identity score (single-cell) ===\n")
 cat("Wilcoxon p =", wi$p.value, "\n")
-cat("ND 均值:", round(mean(beta_meta$identity_score[beta_meta$condition2=="ND"]),3),
-    "T2D 均值:", round(mean(beta_meta$identity_score[beta_meta$condition2=="T2D"]),3), "\n")
+cat("ND mean:", round(mean(beta_meta$identity_score[beta_meta$condition2=="ND"]),3),
+    "T2D mean:", round(mean(beta_meta$identity_score[beta_meta$condition2=="T2D"]),3), "\n")
 
-# ---- 每个身份基因的 T2D vs ND 比较 ----
+# ---- per-identity-gene T2D vs ND comparison ----
 gene_test <- data.frame(gene=character(), p=numeric(), nd_mean=numeric(), t2d_mean=numeric(),
                         log2fc=numeric(), stringsAsFactors=FALSE)
 for (g in c(identity_genes, neuro_genes)) {
@@ -77,16 +77,16 @@ for (g in c(identity_genes, neuro_genes)) {
   t2d <- vals[beta_meta$condition2=="T2D"]
   p <- wilcox.test(nd, t2d)$p.value
   nd_m <- mean(nd); t2d_m <- mean(t2d)
-  # log2fc（用 log1p 避免0）
+  # log2fc (use log1p to avoid 0)
   lfc <- log2((t2d_m + 0.1) / (nd_m + 0.1))
   gene_test <- rbind(gene_test, data.frame(gene=g, p=p, nd_mean=nd_m, t2d_mean=t2d_m, log2fc=lfc))
 }
 gene_test$padj <- p.adjust(gene_test$p, method="BH")
 gene_test <- gene_test[order(gene_test$p), ]
-cat("\n=== 单基因 T2D vs ND（β细胞）===\n")
+cat("\n=== single-gene T2D vs ND (beta-cells) ===\n")
 print(gene_test, row.names=FALSE)
 
-# ---- 图1：身份评分箱式图（单细胞） ----
+# ---- Figure 1: identity-score boxplot (single-cell) ----
 p1 <- ggplot(beta_meta, aes(x=condition2, y=identity_score, fill=condition2)) +
   geom_boxplot(outlier.shape=NA, alpha=0.7) +
   geom_jitter(width=0.2, size=0.6, alpha=0.4) +
@@ -96,7 +96,7 @@ p1 <- ggplot(beta_meta, aes(x=condition2, y=identity_score, fill=condition2)) +
   theme_bw(base_size=12) + theme(legend.position="none")
 ggsave(file.path(outdir, "planA_sc_identity_score.pdf"), p1, width=5.5, height=5)
 
-# ---- 图2：关键身份基因点图（均值+显著性） ----
+# ---- Figure 2: key identity-gene dot plot (mean + significance) ----
 plot_genes <- intersect(c("PDX1","NKX6-1","SLC2A2","GLP1R","HNF1A","MAFA","NEUROD1","GCK","INS",
                           "GAD1","NHLH2","TSHR"), rownames(beta_expr))
 plot_df <- data.frame()
@@ -124,13 +124,13 @@ p2 <- ggplot(plot_df_long, aes(x=gene, y=expr, fill=group)) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ggsave(file.path(outdir, "planA_sc_genes.pdf"), p2, width=9, height=5)
 
-# ---- 图3：单细胞身份评分 ROC（T2D vs ND） ----
+# ---- Figure 3: single-cell identity-score ROC (T2D vs ND) ----
 outcome <- ifelse(beta_meta$condition2=="T2D", 1, 0)
 roc_id <- roc(outcome, -identity_score, quiet=TRUE)
-cat("\n=== 身份评分 ROC（单细胞）===\n")
+cat("\n=== identity-score ROC (single-cell) ===\n")
 cat("AUC =", round(as.numeric(roc_id$auc), 3), "\n")
 
-# 单基因 ROC
+# single-gene ROC
 roc_genes <- intersect(c("SLC2A2","PDX1","NKX6-1","GLP1R","HNF1A","MAFA"), rownames(beta_expr))
 roc_list <- list("Identity score"=roc_id)
 for (g in roc_genes) {
@@ -146,7 +146,7 @@ legend("bottomright", legend=sprintf("%s (AUC=%.3f)", names(aucs), aucs), col=co
 dev.off()
 auc_df <- data.frame(gene=names(aucs), AUC=round(aucs,3))
 write.csv(auc_df, file.path(outdir, "planA_sc_roc_auc.csv"), row.names=FALSE)
-cat("\n=== 单细胞 ROC AUC ===\n")
+cat("\n=== single-cell ROC AUC ===\n")
 print(auc_df[order(-auc_df$AUC),], row.names=FALSE)
 
-cat("\n=== 单细胞交叉验证完成 ===\n")
+cat("\n=== single-cell cross-validation complete ===\n")

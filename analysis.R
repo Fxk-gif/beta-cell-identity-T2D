@@ -1,5 +1,5 @@
-# 方案A：β细胞身份丢失/神经内分泌转分化 核心分析
-# 输出到 figures/planA_* 
+# Plan A: beta-cell identity loss / neuroendocrine transdifferentiation core analysis
+# outputs to figures/planA_* 
 
 source("paths.R")
 library(pROC)
@@ -9,45 +9,45 @@ base <- r3_dir
 outdir <- fig_dir
 dir.create(outdir, showWarnings = FALSE)
 
-# ---- 读取训练集表达矩阵 ----
+# ---- read the training-set expression matrix ----
 expr <- read.csv(file.path(base, "GSE76895_expr.csv"), check.names = FALSE, row.names = 1)
 grp  <- read.csv(file.path(base, "GSE76895_groups.csv"), stringsAsFactors = FALSE)
 colnames(grp) <- c("sample", "group")
 grp <- grp[grp$sample %in% colnames(expr), ]
 expr <- expr[, grp$sample]
-# 只保留 T2D vs ND
+# keep only T2D vs ND
 keep <- grp$group %in% c("T2D", "ND")
 expr <- expr[, keep]
 grp  <- grp[keep, ]
-cat("训练集维度:", nrow(expr), "基因 x", ncol(expr), "样本\n")
-cat("分组:", table(grp$group), "\n")
+cat("training dims:", nrow(expr), "genes x", ncol(expr), "samples\n")
+cat("groups:", table(grp$group), "\n")
 
-# ---- 基因集定义 ----
+# ---- gene-set definition ----
 beta_identity <- c("PDX1","NKX6-1","HNF1A","HNF4A","MAFA","MAFB","NEUROD1","PAX6",
                    "SLC2A2","GCK","ABCC8","KCNJ11","IAPP","UCN3","GLP1R","SLC30A8","PCSK1","PCSK2","INS")
 neuro_trans <- c("GAD1","GAD2","CALCA","TSHR","NHLH2")
 dediff     <- c("FOXE1","MYCN","CHL1","OPRD1","GRIN2D","ALDH1A3","HES1","SOX9","NGN3")
 
-# 只保留有探针的基因
+# keep only genes with probes
 beta_identity <- intersect(beta_identity, rownames(expr))
 neuro_trans   <- intersect(neuro_trans, rownames(expr))
 dediff        <- intersect(dediff, rownames(expr))
-cat("有探针的 beta_identity:", paste(beta_identity, collapse=", "), "\n")
-cat("有探针的 neuro_trans:", paste(neuro_trans, collapse=", "), "\n")
-cat("有探针的 dediff:", paste(dediff, collapse=", "), "\n")
+cat("probed beta_identity:", paste(beta_identity, collapse=", "), "\n")
+cat("probed neuro_trans:", paste(neuro_trans, collapse=", "), "\n")
+cat("probed dediff:", paste(dediff, collapse=", "), "\n")
 
-# ---- β细胞身份评分（z-score 平均） ----
+# ---- beta-cell identity score (z-score average) ----
 zscore <- function(x) (x - mean(x)) / sd(x)
 beta_mat <- expr[beta_identity, , drop = FALSE]
 beta_z   <- t(apply(beta_mat, 1, zscore))
 identity_score <- colMeans(beta_z, na.rm = TRUE)
 
-# 神经内分泌评分
+# neuroendocrine score
 neuro_mat <- expr[neuro_trans, , drop = FALSE]
 neuro_z   <- t(apply(neuro_mat, 1, zscore))
 neuro_score <- colMeans(neuro_z, na.rm = TRUE)
 
-# ---- 身份评分组间比较 ----
+# ---- identity-score group comparison ----
 df <- data.frame(
   sample = grp$sample,
   group = grp$group,
@@ -57,20 +57,20 @@ df <- data.frame(
 )
 df$group <- factor(df$group, levels = c("ND", "T2D"))
 
-# 统计检验
+# statistical test
 wi <- wilcox.test(identity_score ~ group, data = df)
 wn <- wilcox.test(neuro_score ~ group, data = df)
-cat("\n=== 身份评分 Wilcoxon 检验 ===\n")
-cat("β身份评分: p =", wi$p.value, "\n")
-cat("神经内分泌评分: p =", wn$p.value, "\n")
-cat("β身份评分均值 ND vs T2D:", 
+cat("\n=== identity-score Wilcoxon test ===\n")
+cat("beta identity score: p =", wi$p.value, "\n")
+cat("neuroendocrine score: p =", wn$p.value, "\n")
+cat("beta identity score mean ND vs T2D:", 
     round(mean(df$identity_score[df$group=="ND"]),3), "vs",
     round(mean(df$identity_score[df$group=="T2D"]),3), "\n")
-cat("神经内分泌评分均值 ND vs T2D:",
+cat("neuroendocrine score mean ND vs T2D:",
     round(mean(df$neuro_score[df$group=="ND"]),3), "vs",
     round(mean(df$neuro_score[df$group=="T2D"]),3), "\n")
 
-# ---- 图1：身份评分 + 神经内分泌评分 箱式图 ----
+# ---- Figure 1: identity-score + neuroendocrine-score boxplots ----
 library(tidyr)
 df_long <- pivot_longer(df, cols = c(identity_score, neuro_score),
                         names_to = "score", values_to = "value")
@@ -88,7 +88,7 @@ p1 <- ggplot(df_long, aes(x = group, y = value, fill = group)) +
   theme(legend.position = "none")
 ggsave(file.path(outdir, "planA_score_box.pdf"), p1, width = 7, height = 4)
 
-# ---- 图2：关键身份基因表达热图（T2D vs ND 各基因均值） ----
+# ---- Figure 2: key identity-gene expression heatmap (per-gene mean T2D vs ND) ----
 key_genes <- c(beta_identity, neuro_trans, dediff)
 key_genes <- unique(key_genes)
 mean_expr <- t(apply(expr[key_genes, , drop = FALSE], 1, function(r) tapply(r, grp$group, mean)))
@@ -109,18 +109,18 @@ p2 <- ggplot(mean_long, aes(x = group, y = gene, fill = expr)) +
   theme(axis.text.y = element_text(size = 8))
 ggsave(file.path(outdir, "planA_identity_heatmap.pdf"), p2, width = 6, height = 8)
 
-# ---- 图3：关键基因 ROC（身份丢失基因用反向预测 T2D） ----
-# 身份基因在T2D下调 → 用 (1 - zscore) 或直接反向 做ROC
-roc_genes <- c("SLC2A2","PDX1","NKX6-1","HNF1A","GLP1R")  # β身份下调基因
+# ---- Figure 3: key-gene ROC (identity-loss genes predict T2D by reversing) ----
+# identity genes are down in T2D -> use (1 - zscore) or reverse for the ROC
+roc_genes <- c("SLC2A2","PDX1","NKX6-1","HNF1A","GLP1R")  # down beta-identity genes
 roc_genes <- intersect(roc_genes, rownames(expr))
-neuro_up <- c("GAD1","NHLH2","TSHR","CALCA")  # 神经内分泌上调基因
+neuro_up <- c("GAD1","NHLH2","TSHR","CALCA")  # up neuroendocrine genes
 neuro_up <- intersect(neuro_up, rownames(expr))
 
 outcome <- ifelse(df$group == "T2D", 1, 0)
 roc_list <- list()
 for (g in roc_genes) {
   vals <- as.numeric(expr[g, ])
-  roc_list[[paste0(g, " (down)")]] <- roc(outcome, -vals, quiet = TRUE)  # 下调→反向
+  roc_list[[paste0(g, " (down)")]] <- roc(outcome, -vals, quiet = TRUE)  # down -> reverse
 }
 for (g in neuro_up) {
   vals <- as.numeric(expr[g, ])
@@ -139,10 +139,10 @@ legend("bottomright", legend = sprintf("%s (AUC=%.3f)", names(aucs), aucs),
        col = cols, lwd = 2, cex = 0.7, bty = "n")
 dev.off()
 
-# 输出AUC表
+# output the AUC table
 auc_df <- data.frame(gene = names(aucs), AUC = round(aucs, 3))
 write.csv(auc_df, file.path(outdir, "planA_roc_auc.csv"), row.names = FALSE)
-cat("\n=== 身份基因 ROC AUC ===\n")
+cat("\n=== identity-gene ROC AUC ===\n")
 print(auc_df[order(-auc_df$AUC), ])
 
-cat("\n=== 方案A核心分析完成，图已输出到 figures/planA_* ===\n")
+cat("\n=== Plan A core analysis complete; figures written to figures/planA_* ===\n")

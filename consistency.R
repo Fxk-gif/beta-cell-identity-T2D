@@ -1,4 +1,4 @@
-# 方案A 核心证据图：β身份评分跨数据集一致性
+# Plan A core evidence figure: beta-identity-score cross-dataset consistency
 source("paths.R")
 library(ggplot2)
 library(tidyr)
@@ -41,4 +41,4 @@ p <- ggplot(dat, aes(x=group, y=identity_score, fill=group)) +
         plot.title=element_text(size=11, hjust=0.5))
 ggsave(file.path(outdir, "planA_identity_consistency.pdf"), p, width=8, height=4.2)
 
-cat("跨数据集一致性图已输出\n")
+cat("cross-dataset consistency figure written\n")

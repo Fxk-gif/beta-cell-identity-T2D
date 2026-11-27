@@ -5,7 +5,7 @@ from collections import defaultdict
 BASE = paths.geo_processed()
 ANN = os.path.join(BASE, 'gpl570_probe2symbol.csv')
 
-# 读取注释: probe_id -> gene_symbol (取 SYMBOL 非空)
+# read annotations: probe_id -> gene_symbol (keep non-empty SYMBOL)
 probe2sym = {}
 with open(ANN, encoding='utf-8') as f:
     r = csv.DictReader(f)

@@ -5,7 +5,7 @@ BASE = paths.geo_processed()
 R3IN = paths.r3_inputs()
 os.makedirs(R3IN, exist_ok=True)
 
-# ---- 1) 铁死亡基因文件 (KEGG hsa04216) ----
+# ---- 1) ferroptosis gene file (KEGG hsa04216) ----
 ferro = ['LPCAT3','ATG7','SAT2','CP','CYBB','ACSL1','ACSL3','ACSL4','ACSL6','SLC39A14',
          'SLC7A11','ALOX15','FTH1','FTL','GCLC','GCLM','GPX4','GSS','SLC40A1','HMOX1',
          'MAP1LC3BP1','MAP1LC3C','SLC11A2','PCBP1','PCBP2','ACSL5','STEAP3','PRNP','SAT1',
@@ -18,7 +18,7 @@ with open(os.path.join(R3IN, 'ferroptosis_genes.csv'), 'w', newline='', encoding
         w.writerow([g])
 print('ferroptosis_genes.csv:', len(ferro), 'genes')
 
-# ---- 2) 训练集 GSE76895: 只保留 T2D/ND ----
+# ---- 2) training set GSE76895: keep only T2D/ND ----
 grp = {}
 with open(os.path.join(BASE, 'GSE76895_groups_full.csv'), encoding='utf-8') as f:
     for row in csv.DictReader(f):
@@ -31,7 +31,7 @@ with open(src, encoding='utf-8') as f, open(dst, 'w', newline='', encoding='utf-
     rd = csv.reader(f)
     header = next(rd)
     idx = {s: i for i, s in enumerate(header)}
-    cols = [0] + [idx[s] for s in keep]  # 基因列 + 保留样本
+    cols = [0] + [idx[s] for s in keep]  # gene column + kept samples
     w = csv.writer(out)
     w.writerow([header[0]] + keep)
     n = 0
@@ -47,7 +47,7 @@ with open(os.path.join(R3IN, 'GSE76895_groups.csv'), 'w', newline='', encoding='
         w.writerow([s, grp[s]])
 print('GSE76895_groups.csv: written')
 
-# ---- 3) 验证集 GSE76894: 全部103例 ----
+# ---- 3) validation set GSE76894: all 103 samples ----
 grp94 = {}
 with open(os.path.join(BASE, 'GSE76894_groups_full.csv'), encoding='utf-8') as f:
     for row in csv.DictReader(f):
@@ -73,7 +73,7 @@ with open(os.path.join(R3IN, 'GSE76894_groups.csv'), 'w', newline='', encoding='
         w.writerow([s, grp94[s]])
 print('GSE76894_groups.csv: written')
 
-# ---- 校验 ----
+# ---- verification ----
 t2d = sum(1 for s in keep if grp[s]=='T2D'); nd = sum(1 for s in keep if grp[s]=='ND')
 t2d94 = sum(1 for g in grp94.values() if g=='T2D'); nd94 = sum(1 for g in grp94.values() if g=='ND')
 print(f'TRAIN GSE76895: T2D={t2d} ND={nd}')

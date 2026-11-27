@@ -1,6 +1,6 @@
-# 统一路径配置（可复现）—— R 版本
-# 用法：在仓库根目录下运行 R，然后 source("paths.R")
-# 数据目录优先级：环境变量 T2D_REPO_DATA，否则当前工作目录下的 data/
+# unified path configuration (reproducible) -- R version
+# usage: run R from the repository root, then source("paths.R")
+# data-directory order: env var T2D_REPO_DATA, else data/ under the working directory
 
 data_root <- Sys.getenv("T2D_REPO_DATA", unset = NA)
 if (is.na(data_root) || nchar(data_root) == 0) {
@@ -16,4 +16,4 @@ for (d in c(r3_dir, sc_dir, fig_dir, geo_proc)) {
   dir.create(d, showWarnings = FALSE, recursive = TRUE)
 }
 
-cat("数据根目录:", data_root, "\n")
+cat("data root:", data_root, "\n")

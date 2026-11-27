@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-审稿意见补充分析（donor-level 降级后修订版）。
+Supplementary analyses for the reviewer response (revised after the donor-level downgrade).
 
-背景：初稿曾在 cell-level 对 SLC2A2/IAPP/INS 构建"精简协调评分"，并将显著下调
-解读为"细胞自主（cell-autonomous）身份丢失"。经审稿人 R1-1/R2-1 指出 cell-level
-检验为假重复后，本仓库已改为 donor-level 重跑（见 xin_donor_level.py / baron_donor_level.py），
-结论为：donor-level 下无基因显著下调（SLC2A2 FDR=0.109、IAPP p=0.64、core score p=0.85），
-唯一显著的是 GCK/PCSK2 上调（FDR=0.042，与 bulk 方向相反）。
+Background: the initial submission built a "core score" from SLC2A2/IAPP/INS at cell level and
+interpreted the significant downregulation as "cell-autonomous" identity loss. After Reviewers R1-1/R2-1 flagged the cell-level
+test as pseudoreplication, this repository now re-runs the analysis at donor level (see xin_donor_level.py / baron_donor_level.py);
+the conclusion is that no gene is significantly downregulated at donor level (SLC2A2 FDR=0.109, IAPP p=0.64, core score p=0.85),
+and the only significant changes are GCK/PCSK2 upregulation (FDR=0.042, opposite to the bulk direction).
 
-本脚本保留两个补充分析（口径与正文一致，bulk 用 Wilcoxon / scipy mannwhitneyu，z-score 跨基因平均）：
-#1 单细胞精简评分（SLC2A2 + IAPP + INS）——仅供探索性参考，注明 donor-level 下不显著；
-#2 progenitor/disallowed 基因评分（bulk）——验证 T2DM 中反向更低（支撑"成熟耗竭而非去分化"）。
-注意：本脚本仍为 cell-level 实现（历史遗留），其结果**不作为**稿件结论依据；
-    稿件单细胞结论以 donor-level 脚本（xin_donor_level.py / baron_donor_level.py）为准。
+This script retains two supplementary analyses (matching the manuscript: bulk uses Wilcoxon / scipy mannwhitneyu, z-score averaged across genes):
+#1 single-cell core score (SLC2A2 + IAPP + INS) -- exploratory reference only, noted as not significant at donor level;
+#2 progenitor/disallowed gene score (bulk) -- verifies it is lower in T2DM (supporting reduced mature beta-cell program rather than dedifferentiation).
+Note: this script is still a cell-level implementation (legacy); its results are NOT used as the basis for any manuscript conclusion;
+    the manuscript single-cell conclusions follow the donor-level scripts (xin_donor_level.py / baron_donor_level.py).
 """
 import numpy as np
 import paths
@@ -32,7 +32,7 @@ os.makedirs(OUT, exist_ok=True)
 
 def zscore(x):
     x = np.asarray(x, dtype=float)
-    sd = np.std(x, ddof=1)  # 与 R sd() 一致（n-1）
+    sd = np.std(x, ddof=1)  # matches R sd() (n-1)
     return (x - np.mean(x)) / sd if sd > 0 else np.zeros_like(x)
 
 def mw_p(a, b):
@@ -41,9 +41,9 @@ def mw_p(a, b):
 results = {}
 
 # ============================================================
-# 分析 #1：单细胞精简评分（SLC2A2 + IAPP + INS）——探索性，donor-level 下不显著
+# Analysis #1: single-cell core score (SLC2A2 + IAPP + INS) -- exploratory, not significant at donor level
 # ============================================================
-core_cell_genes = ['SLC2A2', 'IAPP', 'INS']  # 初稿"精简协调评分"所用基因（cell-level，历史遗留）
+core_cell_genes = ['SLC2A2', 'IAPP', 'INS']  # genes of the initial "core score" (cell-level, legacy)
 
 for name, expr_f, annot_f, cond_col, t2d_vals, nd_vals in [
     ('Xin', 'xin_beta_expr.csv', 'xin_beta_annot.csv', 'condition', 'T2D', 'non-diabetic'),
@@ -51,7 +51,7 @@ for name, expr_f, annot_f, cond_col, t2d_vals, nd_vals in [
     expr = pd.read_csv(SC + '\\' + expr_f, index_col=0)
     annot = pd.read_csv(SC + '\\' + annot_f)
     cond = annot[cond_col].values
-    # 取可用基因
+    # keep available genes
     avail = [g for g in core_cell_genes if g in expr.index]
     mat = np.vstack([zscore(expr.loc[g].values) for g in avail])
     score = mat.mean(axis=0)
@@ -59,16 +59,16 @@ for name, expr_f, annot_f, cond_col, t2d_vals, nd_vals in [
     nd = cond == nd_vals
     p = mw_p(score[t2d], score[nd])
     results[f'{name}_core_score'] = (p, score[nd].mean(), score[t2d].mean(), avail)
-    print(f'[{name}] 精简协调评分({"+".join(avail)}): p={p:.3e}, ND mean={score[nd].mean():.3f}, T2D mean={score[t2d].mean():.3f}')
-    # 也试试 SLC2A2 + IAPP 双基因
+    print(f'[{name}] core score({"+".join(avail)}): p={p:.3e}, ND mean={score[nd].mean():.3f}, T2D mean={score[t2d].mean():.3f}')
+    # also try the SLC2A2 + IAPP two-gene score
     avail2 = [g for g in ['SLC2A2','IAPP'] if g in expr.index]
     mat2 = np.vstack([zscore(expr.loc[g].values) for g in avail2])
     score2 = mat2.mean(axis=0)
     p2 = mw_p(score2[t2d], score2[nd])
     results[f'{name}_core_score_2'] = (p2, score2[nd].mean(), score2[t2d].mean(), avail2)
-    print(f'[{name}] 双基因评分({"+".join(avail2)}): p={p2:.3e}')
+    print(f'[{name}] two-gene score({"+".join(avail2)}): p={p2:.3e}')
 
-# Baron：列名自带 ND_ / T2D_ 前缀
+# Baron: columns carry ND_ / T2D_ prefixes
 bar = pd.read_csv(SC + r'\baron_beta_expr.csv', index_col=0)
 cols = list(bar.columns)
 nd_cols = [c for c in cols if c.startswith('ND_')]
@@ -80,18 +80,18 @@ t2d_idx = [cols.index(c) for c in t2d_cols]
 nd_idx = [cols.index(c) for c in nd_cols]
 p = mw_p(score[t2d_idx], score[nd_idx])
 results['Baron_core_score'] = (p, score[nd_idx].mean(), score[t2d_idx].mean(), avail)
-print(f'[Baron] 精简协调评分({"+".join(avail)}): p={p:.3e}, ND mean={score[nd_idx].mean():.3f}, T2D mean={score[t2d_idx].mean():.3f}')
+print(f'[Baron] core score({"+".join(avail)}): p={p:.3e}, ND mean={score[nd_idx].mean():.3f}, T2D mean={score[t2d_idx].mean():.3f}')
 avail2 = [g for g in ['SLC2A2','IAPP'] if g in bar.index]
 mat2 = np.vstack([zscore(bar.loc[g].values) for g in avail2])
 score2 = mat2.mean(axis=0)
 p2 = mw_p(score2[t2d_idx], score2[nd_idx])
 results['Baron_core_score_2'] = (p2, score2[nd_idx].mean(), score2[t2d_idx].mean(), avail2)
-print(f'[Baron] 双基因评分({"+".join(avail2)}): p={p2:.3e}')
+print(f'[Baron] two-gene score({"+".join(avail2)}): p={p2:.3e}')
 
 # ============================================================
-# 分析 #2：progenitor/disallowed 评分（bulk）
-# 面板 = planA_analysis.R 原始 8 基因（FOXE1,MYCN,CHL1,OPRD1,GRIN2D,ALDH1A3,HES1,SOX9）
-# 已验证：R wilcox exact p = 1.369e-11 (GSE76895) / 2.446e-04 (GSE76894)
+# Analysis #2: progenitor/disallowed score (bulk)
+# panel = the original 8 genes from planA_analysis.R (FOXE1,MYCN,CHL1,OPRD1,GRIN2D,ALDH1A3,HES1,SOX9)
+# verified: R wilcox exact p = 1.369e-11 (GSE76895) / 2.446e-04 (GSE76894)
 # ============================================================
 prog_genes = ['FOXE1','MYCN','CHL1','OPRD1','GRIN2D','ALDH1A3','HES1','SOX9']
 
@@ -103,26 +103,26 @@ for tag, expr_f, grp_f in [('GSE76895', 'GSE76895_expr.csv', 'GSE76895_groups.cs
     grp = grp[grp['sample'].isin(expr.columns)]
     expr = expr[grp['sample']]
     avail = [g for g in prog_genes if g in expr.index]
-    # 用样本内 z-score（跨样本），再跨基因平均
+    # within-sample z-score (across samples), then averaged across genes
     mat = np.vstack([zscore(expr.loc[g].values) for g in avail])
     score = mat.mean(axis=0)
     t2d = grp['group'].values == 'T2D'
     nd = grp['group'].values == 'ND'
     p = mw_p(score[t2d], score[nd])
     results[f'{tag}_prog_score'] = (p, score[nd].mean(), score[t2d].mean(), avail)
-    print(f'[{tag}] progenitor评分({len(avail)} genes: {",".join(avail)}): p={p:.3e}, ND mean={score[nd].mean():.3f}, T2D mean={score[t2d].mean():.3f}')
-    # 单基因方向
+    print(f'[{tag}] progenitor score({len(avail)} genes: {",".join(avail)}): p={p:.3e}, ND mean={score[nd].mean():.3f}, T2D mean={score[t2d].mean():.3f}')
+    # per-gene direction
     for g in avail:
         gp = mw_p(expr.loc[g].values[t2d], expr.loc[g].values[nd])
         print(f'    {g}: T2D mean={expr.loc[g].values[t2d].mean():.3f}, ND mean={expr.loc[g].values[nd].mean():.3f}, p={gp:.3e}')
 
 # ============================================================
-# 画图
+# plot
 # ============================================================
 plt.rcParams['font.size'] = 11
 plt.rcParams['axes.titlesize'] = 12
 
-# 图 A：单细胞精简协调评分（Xin + Baron 两 panel 合成）
+# Panel A: single-cell core score (Xin + Baron combined)
 fig, axes = plt.subplots(1, 3, figsize=(13, 4.4))
 
 # Xin core score
@@ -153,8 +153,8 @@ bp = ax.boxplot([bar_score[nd_idx], bar_score[t2d_idx]], widths=0.5,
 bp['boxes'][0].set_facecolor('#4C8BF5'); bp['boxes'][1].set_facecolor('#F58A8A')
 ax.set_title(f'Baron (GSE84133)\ncore score p={bar_p:.2e}', fontsize=10)
 
-# progenitor bulk score（发现集 + 验证集 合并成 panel C，双箱）
-# 官方 p 值 = R wilcox.test(exact=TRUE) 输出（check_dediff_p.R，与正文一致）
+# progenitor bulk score (discovery + validation combined into panel C, two boxes)
+# official p-values = R wilcox.test(exact=TRUE) output (check_dediff_p.R, matches the manuscript)
 R_P_95 = 1.369e-11
 R_P_94 = 2.446e-04
 prog_scores = []
@@ -189,23 +189,23 @@ fig.suptitle('Supplementary: cell-autonomous core score & progenitor-score rever
 plt.tight_layout()
 fig.savefig(OUT + r'\planA_reviewer_supplement.png', dpi=200, bbox_inches='tight')
 fig.savefig(OUT + r'\planA_reviewer_supplement.pdf', bbox_inches='tight')
-print('\n图已保存: planA_reviewer_supplement.png/pdf')
+print('\nFigures saved: planA_reviewer_supplement.png/pdf')
 
-# 保存数值结果
-# 注意：progenitor/disallowed 评分的 p 值此处为 Python scipy.stats.mannwhitneyu 默认渐近法输出，
-# 与稿件正文/图注/Table S8 采用的 R wilcox.test(exact=TRUE) 精确法 p 值存在口径差异：
-#   GSE76895：本文件(渐近) 1.44e-09  vs  稿件(R exact) 1.37e-11（check_dediff_p.R 实跑确认）
-#   GSE76894：本文件(渐近) 3.73e-04  vs  稿件(R exact) 2.45e-04
-# 稿件统一以 R wilcox.test(exact=TRUE) 为最终口径（见 Methods Statistics 段）。
-# 核心评分（Xin/Baron）的 p 值两口径一致，无需区分。
+# save the numerical results
+# Note: the progenitor/disallowed p-values here are from Python scipy.stats.mannwhitneyu (asymptotic by default),
+# which differ from the exact R wilcox.test(exact=TRUE) p-values used in the manuscript text / legend / Table S8:
+#   GSE76895: this file (asymptotic) 1.44e-09  vs  manuscript (R exact) 1.37e-11 (confirmed by check_dediff_p.R)
+#   GSE76894: this file (asymptotic) 3.73e-04  vs  manuscript (R exact) 2.45e-04
+# The manuscript uses R wilcox.test(exact=TRUE) as the final standard (see the Methods, Statistics section).
+# The core-score (Xin/Baron) p-values agree between the two methods, so no distinction is needed.
 with open(BASE + r'\reviewer_supplement_results.txt', 'w', encoding='utf-8') as f:
-    f.write('# 口径说明：progenitor/disallowed 评分的 p 值以 R wilcox.test(exact=TRUE) 为最终口径\n')
-    f.write('#   GSE76895: R exact p=1.369e-11（正文用）；下方 Python 渐近 p=1.44e-09 仅作参考\n')
-    f.write('#   GSE76894: R exact p=2.446e-04（正文用）；下方 Python 渐近 p=3.73e-04 仅作参考\n')
-    f.write('# 核心评分（Xin/Baron）Python 与 R 口径一致。\n')
+    f.write('# Standard: the progenitor/disallowed p-values follow R wilcox.test(exact=TRUE)\n')
+    f.write('#   GSE76895: R exact p=1.369e-11 (used in the manuscript); the Python asymptotic p=1.44e-09 below is for reference only\n')
+    f.write('#   GSE76894: R exact p=2.446e-04 (used in the manuscript); the Python asymptotic p=3.73e-04 below is for reference only\n')
+    f.write('# The core-score (Xin/Baron) p-values agree between Python and R.\n')
     for k, v in results.items():
         if isinstance(v, tuple):
             f.write(f'{k}: p={v[0]:.6e}, ND_mean={v[1]:.4f}, T2D_mean={v[2]:.4f}, genes={v[3]}\n')
         else:
             f.write(f'{k}: {v}\n')
-print('数值已保存: reviewer_supplement_results.txt')
+print('Numerical results saved: reviewer_supplement_results.txt')

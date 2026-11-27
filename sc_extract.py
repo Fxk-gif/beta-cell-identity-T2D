@@ -4,7 +4,7 @@ from collections import Counter
 
 sc_dir = paths.sc_data()
 
-# 1. 读注释（GSM -> condition/subtype/donor），并按 GSM 顺序（即 Sample 顺序）
+# 1. read annotations (GSM -> condition/subtype/donor), in GSM (=Sample) order
 annot = {}
 gsm_order = []
 with open(sc_dir + r'\GSE81608_annot.csv', encoding='utf-8') as f:
@@ -14,11 +14,11 @@ with open(sc_dir + r'\GSE81608_annot.csv', encoding='utf-8') as f:
         gsm_order.append(gsm)
         annot[gsm] = row
 
-print('注释样本数:', len(gsm_order))
-print('condition 分布:', Counter(annot[g]['condition'] for g in gsm_order))
-print('subtype 分布:', Counter(annot[g]['subtype'] for g in gsm_order))
+print('annotation samples:', len(gsm_order))
+print('condition distribution:', Counter(annot[g]['condition'] for g in gsm_order))
+print('subtype distribution:', Counter(annot[g]['subtype'] for g in gsm_order))
 
-# 2. 目标基因 Entrez ID
+# 2. target-gene Entrez IDs
 target = {
     'PDX1': 3651, 'NKX6-1': 4825, 'SLC2A2': 6514, 'GLP1R': 2740, 'HNF1A': 6927,
     'HNF4A': 3172, 'MAFA': 389692, 'MAFB': 9935, 'NEUROD1': 4760, 'PAX6': 5080,
@@ -29,14 +29,14 @@ target = {
 }
 id2sym = {str(v): k for k, v in target.items()}
 
-# 3. 读取矩阵，提取目标基因表达（gene x sample）
-# 矩阵：行=gene(Entrez), 列=Sample_1..1600
+# 3. read the matrix and extract target-gene expression (gene x sample)
+# matrix: rows=gene(Entrez), cols=Sample_1..1600
 expr = {sym: None for sym in target}  # sym -> list of 1600 values
 mat_file = sc_dir + r'\GSE81608_human_islets_rpkm.txt.gz'
 with gzip.open(mat_file, 'rt') as f:
     header = f.readline().rstrip('\n').split('\t')
     sample_cols = header[1:]  # Sample_1 ...
-    assert len(sample_cols) == 1600, f'样本列数 {len(sample_cols)}'
+    assert len(sample_cols) == 1600, f'sample columns {len(sample_cols)}'
     for line in f:
         parts = line.rstrip('\n').split('\t')
         gid = parts[0]
@@ -45,22 +45,22 @@ with gzip.open(mat_file, 'rt') as f:
             expr[sym] = [float(x) for x in parts[1:]]
 
 missing = [s for s, v in expr.items() if v is None]
-print('缺失基因:', missing)
-print('成功提取基因数:', len([s for s, v in expr.items() if v is not None]))
+print('missing genes:', missing)
+print('genes extracted:', len([s for s, v in expr.items() if v is not None]))
 
-# 4. 定位 beta 细胞样本索引
+# 4. locate the beta-cell sample indices
 beta_idx = [i for i, g in enumerate(gsm_order) if annot[g]['subtype'] == 'beta']
-print('beta 细胞数:', len(beta_idx))
-# 检查 condition
+print('beta cells:', len(beta_idx))
+# check condition
 beta_cond = [annot[gsm_order[i]]['condition'] for i in beta_idx]
 print('beta condition:', Counter(beta_cond))
 
-# 5. 提取 beta 细胞的身份基因表达矩阵
+# 5. extract the beta-cell identity-gene expression matrix
 identity_genes = ['PDX1','NKX6-1','SLC2A2','GLP1R','HNF1A','HNF4A','MAFA','MAFB',
                   'NEUROD1','PAX6','GCK','ABCC8','KCNJ11','IAPP','SLC30A8','INS']
 neuro_genes = ['GAD1','GAD2','CALCA','TSHR','NHLH2']
 
-# 保存 beta 细胞表达子集
+# save the beta-cell expression subset
 with open(sc_dir + r'\xin_beta_expr.csv', 'w', newline='') as f:
     w = csv.writer(f)
     w.writerow(['gene'] + [f'S{i}' for i in beta_idx])
@@ -68,11 +68,11 @@ with open(sc_dir + r'\xin_beta_expr.csv', 'w', newline='') as f:
         if expr[sym] is not None:
             w.writerow([sym] + [expr[sym][i] for i in beta_idx])
 
-# 保存 beta 注释
+# save the beta annotations
 with open(sc_dir + r'\xin_beta_annot.csv', 'w', newline='') as f:
     w = csv.writer(f)
     w.writerow(['sample_idx', 'condition', 'donor'])
     for i in beta_idx:
         w.writerow([i, annot[gsm_order[i]]['condition'], annot[gsm_order[i]]['donor']])
 
-print('\n已保存 xin_beta_expr.csv 和 xin_beta_annot.csv')
+print('\nSaved xin_beta_expr.csv and xin_beta_annot.csv')

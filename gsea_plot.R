@@ -4,16 +4,16 @@ library(ggplot2)
 base <- r3_dir
 outdir <- fig_dir
 
-# 读全基因 logFC
+# read the genome-wide logFC
 fc <- read.csv(file.path(base, "volcano_input.csv"))
 names(fc) <- c("gene", "logFC", "padj")
-fc <- fc[order(-fc$logFC), ]  # 降序
+fc <- fc[order(-fc$logFC), ]  # descending
 
-# 读靶基因集
+# read the target gene sets
 sets <- read.csv(file.path(base, "tf_target_sets.csv"))
 set_names <- unique(sets$set)
 
-# GSEA 富集曲线函数
+# GSEA enrichment-curve function
 gsea_curve <- function(fc, geneset) {
   hits <- fc$gene %in% geneset
   n_hits <- sum(hits)
@@ -23,7 +23,7 @@ gsea_curve <- function(fc, geneset) {
   return(data.frame(rank = 1:nrow(fc), es = es))
 }
 
-# 画 4 个基因集的 GSEA 富集曲线
+# plot the GSEA enrichment curves of the 4 gene sets
 plot_list <- list()
 for (sn in set_names) {
   gs <- sets$gene[sets$set == sn]
@@ -33,7 +33,7 @@ for (sn in set_names) {
   plot_list[[sn]] <- curve
 }
 
-# 合成一张图（4个子图）
+# combine into one figure (4 panels)
 library(gridExtra)
 plots <- lapply(names(plot_list), function(sn) {
   ggplot(plot_list[[sn]], aes(x = rank, y = es)) +
@@ -48,11 +48,11 @@ pdf(file.path(outdir, "planA_gsea_curves.pdf"), width = 9, height = 7)
 grid.arrange(grobs = plots, ncol = 2)
 dev.off()
 
-# 单张核心图：PDX1 靶基因 GSEA 富集曲线（含命中基因标记）
+# single core panel: PDX1 target-gene GSEA enrichment curve (with hit markers)
 gs <- sets$gene[sets$set == "PDX1_targets"]
 gs <- gs[gs %in% fc$gene]
 curve <- gsea_curve(fc, gs)
-# 找 ES 最低点
+# find the ES minimum
 min_es <- min(curve$es)
 min_rank <- which.min(curve$es)
 
@@ -64,7 +64,7 @@ p <- ggplot(curve, aes(x = rank, y = es)) +
   annotate("text", x = min_rank, y = min_es, label = sprintf("ES = %.3f", min_es),
            hjust = 0, vjust = 1.5, color = "#c0504d", fontface = "bold") +
   labs(title = "GSEA: PDX1 target genes enriched in downregulation (T2D)",
-       subtitle = "PDX1 靶基因显著富集在 logFC 负端（下调）",
+       subtitle = "PDX1 targets significantly enriched at the negative (downregulated) logFC end",
        x = "Rank (high → low logFC)", y = "Enrichment Score") +
   theme_bw(base_size = 11)
 print(p)
